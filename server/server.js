@@ -1,26 +1,21 @@
+const { ApolloServer } = require("apollo-server-express")
 const express = require('express')
-const app = express()
 const cors = require('cors')
 const pool = require('./db')
-const { graphqlHTTP } = require('express-graphql')
+const { typeDefs } = require("./Schemas/TypeDefs")
+const { resolvers } = require("./Schemas/resolvers")
 
-const schema = require('./Schemas')
+async function startApolloServer() {
+    const server = new ApolloServer({ typeDefs, resolvers })
+    await server.start()
 
-//middleware
-// app.use(cors())
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json()) //req.body
+    const app = express()
+    server.applyMiddleware({ app, cors: true })
 
-//Routes//
+    app.listen(5000, () => {
+        console.log('Server has started on port 5000')
+    })
+}
+startApolloServer()
 
 
-
-
-app.use('/graphql', graphqlHTTP({ //Graphql route
-    schema,
-    graphiql: true
-}))
-
-app.listen(5000, () => {
-    console.log('Server has started on port 5000')
-})
