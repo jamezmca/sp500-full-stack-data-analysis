@@ -1,7 +1,6 @@
 const { ApolloServer } = require("apollo-server-express")
 const express = require('express')
 const cors = require('cors')
-const pool = require('./db')
 const { typeDefs } = require("./Schemas/TypeDefs")
 const { resolvers } = require("./Schemas/resolvers")
 
@@ -10,6 +9,7 @@ async function startApolloServer() {
     await server.start()
 
     const app = express()
+    app.use(cors())
     server.applyMiddleware({ app, cors: true })
 
     app.listen(5000, () => {
