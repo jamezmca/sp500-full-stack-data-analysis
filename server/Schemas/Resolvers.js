@@ -7,40 +7,15 @@ const pool = require('../db')
 // 1
 const resolvers = {
     Query: {
-        getAllStockPrices() {
-            // async/await - check out a client
-            ; (async () => {
+        getAllStockPrices: async () => {
                 const client = await pool.connect()
-                let persist = []
+                let persist
                 try {
                     const res = await client.query('SELECT * FROM twoweekprices')
                     persist = res.rows.map(row => {
-                        console.log('aloha', row)
+                        console.log(row)
                         return row
                     })
-                    console.log(persist)
-                } catch (err) {
-                    console.log(err)
-                } finally {
-                    // Make sure to release the client before any error handling,
-                    // just in case the error handling itself throws an error.
-                    client.release()
-                    return persist
-
-                }
-            })().catch(err => console.log(err.stack))
-            //make return data statement
-            //write fetch statement from db
-            console.log('coolio')
-            return 'hello'//returns like res.send
-        },
-        greeting: async () => {
-                const client = await pool.connect()
-                let persist = 'aloha'
-                try {
-                    const res = await client.query('SELECT * FROM twoweekprices')
-                    persist = res.rows[0].name
-                    
                     console.log(persist)
                 } catch (err) {
                     console.log(err)

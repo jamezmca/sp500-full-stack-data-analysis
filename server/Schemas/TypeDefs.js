@@ -31,7 +31,6 @@ const typeDefs = gql`
     #Queries
     type Query {
         getAllStockPrices: [Stock!]!,         #Returns a list of users
-        greeting: String!,
         practice: [Handy!]!,
     }
 
