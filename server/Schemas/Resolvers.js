@@ -4,7 +4,8 @@ const pool = require('../db')
 //1st - query database for all latest data points
 //2nd - check what data is or is not there
 //3rd - post any additional data to the database
-// 1
+// 
+
 const resolvers = {
     Query: {
         getAllStockPrices: async () => {

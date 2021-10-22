@@ -1,4 +1,4 @@
-const Pool = require('pg').Pool
+const Pool = require('pg').Pool //could also use knox
 
 //psql -U postgres in terminal
 const pool = new Pool({
