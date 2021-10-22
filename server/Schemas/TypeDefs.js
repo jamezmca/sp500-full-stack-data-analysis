@@ -18,7 +18,24 @@ const typeDefs = gql`
         price12: Int!
         price13: Int!
         price14: Int!
-        
+    }
+
+    type AddStock {
+        name: String!
+        price1: Int!
+        price2: Int!
+        price3: Int!
+        price4: Int!
+        price5: Int!
+        price6: Int!
+        price7: Int!
+        price8: Int!
+        price9: Int!
+        price10: Int!
+        price11: Int!
+        price12: Int!
+        price13: Int!
+        price14: Int!
     }
 
     type Handy {

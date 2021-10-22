@@ -21,3 +21,10 @@ CREATE TABLE twoweekprices(
 
 INSERT INTO twoweekprices (name, price1, price2, price3, price4, price5, price6, price7, price8, price9, price10, price11, price12, price13, price14) 
 VALUES ('nice', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14);
+
+INSERT INTO table_name (column_list)
+VALUES
+    (value_list_1),
+    (value_list_2),
+    ...
+    (value_list_n);
