@@ -5,7 +5,6 @@ import {
   useQuery,
   gql
 } from "@apollo/client"
-import './App.css'
 import Header from "./Components/Header";
 import Report from "./Components/Report";
 import DataPipeline from "./Components/DataPipeline";
@@ -22,16 +21,14 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="app">
-        <main className="main">
+      <div className="bg-primary text-white min-h-screen p-4">
           <Header />
-          <body className="body">
+          <div className="max-w-prose	m-auto text-justify">
             <Report />
             <DataPipeline />
             <StockList />
-          </body>
+          </div>
           <Footer />
-        </main>
       </div>
     </ApolloProvider>
 
