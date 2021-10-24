@@ -18,8 +18,8 @@ export default function StockList() {
         console.log(data)
     }
     return (
-        <div>
-
+        <div className="my-10">
+          <h2 style={{ textShadow: '0 0 3px white' }} className="text-center uppercase text-xl font-semibold">Stock List:</h2>
         </div>
     )
 }

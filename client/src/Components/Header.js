@@ -2,7 +2,7 @@ import React from 'react'
 //title and dictionary definition
 export default function Header() {
     return (
-        <div className="mb-8 text-base">
+        <div className="mb-4 text-base">
             <div className="h-8 bg-gradient-to-b from-white to-transparent opacity-10"></div>
             <div className="m-8">
                 <h1 style={{ textShadow: '0 0 5px white' }}
