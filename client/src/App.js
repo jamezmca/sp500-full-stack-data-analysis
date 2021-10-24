@@ -21,9 +21,9 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <div className="bg-primary text-white min-h-screen p-4">
+      <div className="bg-secondary text-white min-h-screen flex flex-col font-body ">
           <Header />
-          <div className="max-w-prose	m-auto text-justify">
+          <div className="max-w-prose	m-auto text-justify flex-grow px-8">
             <Report />
             <DataPipeline />
             <StockList />
