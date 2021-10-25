@@ -239,15 +239,18 @@ for steak,val in stockReturnsList.items():
 # stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier']) if k > 0.6 and k < 2}
 stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier'])}
 
-#Save to dataframe and to csv
+#Save to dataframe and to csv and create table schema
 stockReturn_df = pd.DataFrame.from_dict(stockReturnMetricsList)
 stockReturn_df.to_csv('df_stock_return_risk.csv', header=stockReturn_df.columns, index=True , encoding='utf-8')
+
 
 print('Finished part 5 of analysis')
 
 # %% PART 6: MOST RECENT TWO WEEKS OF STOCKS TO INITIALIZE SCANNING
 #GETS UPLOADED TO DB IN TABLE - 
 lastTwoWeeks = df_sp_prices.tail(14)
+
+#SAVE TO CSV AND ALSO CREATE TABLE SCHEMA CSV
 
 #%% PART 7: PLOT GRAPHS
 #COMBINED GRAPH OF TOTAL DATA AND 
@@ -256,7 +259,7 @@ pineapple = [[x, w] for x,w in returnsHistogramAverages.items()]
 pineapple_df = pd.DataFrame(pineapple, columns=['Return Multiplier Bin', 'Interconnectedness Average'])
 pineapple_df.describe()
 fig2 = px.scatter(pineapple_df, x="Interconnectedness Average", y="Return Multiplier Bin", color="Return Multiplier Bin", template="plotly_dark")
-fig2.show()
+fig2.show() #pip install kaleido
 fig2.write_image('img1.png')
 
 cheese = [[x,v['mean']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
@@ -287,9 +290,9 @@ combined = make_subplots(x_title="Interconnectedness", y_title="Return Multiplie
 combined.add_traces(f1.data + f2.data + f3.data + f4.data + f5.data+ f6.data)
 combined.update_layout(template="plotly_dark")
 combined.show()
-combined.write_image('img2.png')
+combined.write_image('img2.png') #pip install kaleido
 
-#%% PLOT - TOTAL DATA PLOT WITH STATISTICAL ANALYSIS 
+#%% PART 8: CONVERT IMAGES TO BASE 64ENCODING
 
 # %% PART 8: GENERATE THE FOLLOWING GRAPHS
 lastTwoWeeks

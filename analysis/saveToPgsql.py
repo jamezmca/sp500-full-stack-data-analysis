@@ -20,7 +20,7 @@ data_sets = ['df_sp_prices.csv', 'df_sp_searches.csv', '']
 
 csv_files = []
 for file in os.listdir(os.getcwd()):
-    if file.endswith('.csv'):
+    if file.endswith('.csv' or '.png'):
         csv_files.append(file)
 
 for dataset in csv_files:
