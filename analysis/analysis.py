@@ -1,5 +1,6 @@
 #%% INITIALIZE
 # import os
+from re import template
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -8,9 +9,9 @@ import math
 from datetime import date
 import plotly.express as px
 from plotly.subplots import make_subplots
+import plotly.graph_objects as go
 
 #Import from functions.py
-from functions import initializeWeekBins, findLocationsOfValueDrop, findOverlappingWeeks, sp500AvgPrice
 
 #INITIALIZE DATAFRAMES FROM CSV FILES
 df_sp_prices = pd.read_csv('df_sp_prices.csv')
@@ -27,7 +28,7 @@ analysisRange = 0.01 #range determines allowable drop gradient
 dec = 1.2 #signifies a 20 percent decrease in value
 howManyDaysLater = 60 #2 month return
 
-#FUNCTIONS
+# %% PART 1: FIND LOCATIONS OF NEGATIVE GRADIENT 
 def initializeWeekBins(datesArray):
     hokeyPokey = {}
     for i in range(len(datesArray)):
@@ -54,13 +55,6 @@ def findOverlappingWeeks(wklyBinIndexes, maxIndex, minIndex):
             maxOverlap = overlap
             bongo.append(key)
     return bongo
-
-def sp500AvgPrice(werkbins, dollares):
-    james = dict()
-    for werk in werkbins:
-        avgPrice = np.mean(np.array(dollares[int(werk.split(' ')[0]): int(werk.split(' ')[1])]) )
-        james[werk] = avgPrice
-    return james
 
 def findLocationsOfValueDrop(array, analysisRange, decrement, stack, how_many_days_later, week_bins): #FIND ALL STATS IN HERE AND MAKE IT A BUNCH OF SMALLER FUNCTIONS AND ALSO INCLUDE WHICHEVER DATE BINS IT'S IN
     gradients = {}
@@ -97,10 +91,50 @@ def findLocationsOfValueDrop(array, analysisRange, decrement, stack, how_many_da
                     week_bins[week][1][stack] = multiplier
     return gradients, week_bins
 
+def sp500AvgPrice(werkbins, dollares):
+    james = dict()
+    for werk in werkbins:
+        avgPrice = np.mean(np.array(dollares[int(werk.split(' ')[0]): int(werk.split(' ')[1])]) )
+        james[werk] = avgPrice
+    return james
 
+
+yearsToWeeks = 5 * 52
+xRange = yearsToWeeks * analysisRange
+
+weekBins = initializeWeekBins(dates)
+negGradsForAllStocks = {}
+for stock in df_sp_prices:
+    if stock != 'date' and stock != 'Date':
+        negGradsForAllStocks[stock], weekBins = findLocationsOfValueDrop(df_sp_prices[stock], analysisRange, dec, stock, howManyDaysLater, weekBins)
+# print(f'The total number of negative gradient segments in the last 5 years\n of every stock in the S&P500 is: {sum} \nWith an analysis range of {xRange} weeks.')
+allStocksWeekBinsCount = {x:y[0] for x,y in weekBins.items()}
+
+spWkBins = initializeWeekBins(dates)
+negGradsForSP500, spWkBins = findLocationsOfValueDrop(df_sp_price['price'], analysisRange, dec, 'S&P500', howManyDaysLater, spWkBins)
+spAvgPricePerWkBin = sp500AvgPrice(spWkBins, df_sp_price['price'])
+
+print(f'finished part 1 for analysis range: {xRange} weeks')
+
+#%% PART 2: CREATE HISTOGRAM OF RETURN MULTIPLIER AND AVERAGE INTERCONNECTEDNESS FROM LIST OF ASSOCIATES INTERCONNECTEDNESSES
+
+returnsHistogramLists = dict()
+
+for welk in  weekBins.values():
+    for k,v in welk[1].items():
+        grade = np.around(v, 1)
+        if grade in returnsHistogramLists:
+            returnsHistogramLists[grade].append(welk[0])
+        else:
+            returnsHistogramLists[grade] = [welk[0]]
+returnsHistogramLists = {k: v for k, v in sorted(returnsHistogramLists.items(), key=lambda item: item[0]) if k > 0.6 and k < 2}
+returnsHistogramAverages = {k:np.mean(np.array(v)) for k,v in returnsHistogramLists.items()}
+
+print(f'finished part 2 for analysis finished')
+
+#%% PART 3: CREATE THE INVERSE OF THE ABOVE SO PERCENTILES FOR AN INTERCONNECTEDNESS AND PERCENTILES OF THE RETURN VALUE LIST
 def createInterconnectednessHistograms(veekbins):
     interconnectednessHistogram = dict()
-
     for wek in veekbins.values():
         interCon = wek[0]
         if interCon in interconnectednessHistogram:
@@ -142,58 +176,125 @@ def createInterconnectednessHistograms(veekbins):
                 else:
                     interconnectednessHistogramSmooth[grade] += val['list']
         else : 
-            grade = int(str(key)[:1] + '05')
+            grade = int(str(key)[:2] + '5')
             if grade not in interconnectednessHistogramSmooth:
                 interconnectednessHistogramSmooth[grade] = val['list']
             else:
                 interconnectednessHistogramSmooth[grade] += val['list']
     interconnectednessHistogramSmoothMetrics = {k:{'mean': np.mean(np.array(v)), 'median': np.median(np.array(v)), 'UQ': np.quantile(np.array(v), 0.75), 'LQ': np.quantile(np.array(v), 0.25), '5th': np.quantile(np.array(v), 0.05)} for k,v in interconnectednessHistogramSmooth.items()}
-
-
     interconnectednessHistogram = {k: v for k, v in sorted(interconnectednessHistogram.items(), key=lambda item: item[0])}
     interconnectednessHistogramSmoothMetrics = {k: v for k, v in sorted(interconnectednessHistogramSmoothMetrics.items(), key=lambda item: item[0])}
-
     return interconnectednessHistogram, interconnectednessHistogramSmooth, interconnectednessHistogramSmoothMetrics
-
-# %% PART 1: FIND LOCATIONS OF NEGATIVE GRADIENT 
-yearsToWeeks = 5 * 52
-xRange = yearsToWeeks * analysisRange
-
-weekBins = initializeWeekBins(dates)
-negGradsForAllStocks = {}
-for stock in df_sp_prices:
-    if stock != 'date' and stock != 'Date':
-        negGradsForAllStocks[stock], weekBins = findLocationsOfValueDrop(df_sp_prices[stock], analysisRange, dec, stock, howManyDaysLater, weekBins)
-# print(f'The total number of negative gradient segments in the last 5 years\n of every stock in the S&P500 is: {sum} \nWith an analysis range of {xRange} weeks.')
-allStocksWeekBinsCount = {x:y[0] for x,y in weekBins.items()}
-
-spWkBins = initializeWeekBins(dates)
-negGradsForSP500, spWkBins = findLocationsOfValueDrop(df_sp_price['price'], analysisRange, dec, 'S&P500', howManyDaysLater, spWkBins)
-spAvgPricePerWkBin = sp500AvgPrice(spWkBins, df_sp_price['price'])
-
-print(f'finished part 1 for analysis range: {xRange} weeks')
-
-#%% PART 2: CREATE HISTOGRAM OF RETURN MULTIPLIER AND AVERAGE INTERCONNECTEDNESS FROM LIST OF ASSOCIATES INTERCONNECTEDNESSES
-
-returnsHistogramLists = dict()
-
-for welk in  weekBins.values():
-    for k,v in welk[1].items():
-        grade = np.around(v, 1)
-        if grade in returnsHistogramLists:
-            returnsHistogramLists[grade].append(welk[0])
-        else:
-            returnsHistogramLists[grade] = [welk[0]]
-returnsHistogramLists = {k: v for k, v in sorted(returnsHistogramLists.items(), key=lambda item: item[0]) if k > 0.6 and k < 2}
-returnsHistogramAverages = {k:np.mean(np.array(v)) for k,v in returnsHistogramLists.items()}
-
-print(f'finished part 2 for analysis finished')
-
-#%% PART 3: CREATE THE INVERSE OF THE ABOVE SO PERCENTILES FOR AN INTERCONNECTEDNESS AND PERCENTILES OF THE RETURN VALUE LIST
 
 interconnectednessHistogram, interconnectednessHistogramSmooth, interconnectednessHistogramSmoothMetrics = createInterconnectednessHistograms(weekBins)
 
-print(f'finished part 2 for analysis finished finding {len(interconnectednessHistogramSmooth.keys())} drops')
-# %%
+print(f'finished part 3 for analysis finished finding {len(interconnectednessHistogramSmooth.keys())} drops')
 
+#%% PART 4: CREATE A DICTIONARY OF EVERY MULTIPLER AND INTERCONNECTEDNESS VALUE AND RUN REGRESSION MODEL
+interconnectednessReturn = dict()
+for intercon, val in interconnectednessHistogramSmooth.items():
+    print(intercon)
+    for ret in val:
+        interconnectednessReturn[ret] = intercon
+interconnectednessReturn = {k: v for k, v in sorted(interconnectednessReturn.items(), key=lambda item: item[0]) if k < 2.5 and k > 0.6}
+
+#REGRESSION ANALYSIS
+eggies = [[x, w] for x,w in interconnectednessReturn.items()]
+
+eggies_df = pd.DataFrame(eggies, columns=['Return Multiplier', 'Interconnectedness'])
+eggies_df.describe()
+
+p = np.poly1d(np.polyfit(eggies_df['Interconnectedness'], eggies_df['Return Multiplier'], 1))
+regr_results = sp.stats.linregress(eggies_df['Interconnectedness'], eggies_df['Return Multiplier'])
+
+print(f'''finished part 4 for analysis finished finding {len(interconnectednessReturn.keys())} returns. \n
+The linear regression analysis found a pvalue < 0.001 which suggests statistical significance.
+The gradient value from the regression analysis suggests a {regr_results.slope*100*100}% increase
+in return for every 100 increase Interconnectedness and a y-intercept of {regr_results.intercept}.
+''')
+
+
+#%% PART 5: DETERMINE THE GREATEST RISK AND RETURN FROM EACH STOCK AND THEIR HISTORY
+#GETS UPLOADED TO DB IN TABLE - 
+stockReturnsList = dict()
+for deep,val in negGradsForAllStocks.items():
+    for hi in val.values():
+        if newDict[deep] in stockReturnsList:
+            stockReturnsList[newDict[deep]].append(hi['multiplier'])
+        else:
+            stockReturnsList[newDict[deep]] = [hi['multiplier']]
+
+for sp500 in negGradsForSP500.values():
+    if 'sp500' in stockReturnsList:
+        stockReturnsList['sp500'].append(hi['multiplier'])
+    else:
+        stockReturnsList['sp500'] = [hi['multiplier']]
+
+stockReturnMetricsList = dict()
+for steak,val in stockReturnsList.items():
+        stockReturnMetricsList[steak] = {
+            'risk': len([x for x in val if x <= 1])/len(val)*100,
+            'avgMultiplier': np.mean(np.array(val))
+        }
+# stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier']) if k > 0.6 and k < 2}
+stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier'])}
+
+#Save to dataframe and to csv
+stockReturn_df = pd.DataFrame.from_dict(stockReturnMetricsList)
+stockReturn_df.to_csv('df_stock_return_risk.csv', header=stockReturn_df.columns, index=True , encoding='utf-8')
+
+print('Finished part 5 of analysis')
+
+# %% PART 6: MOST RECENT TWO WEEKS OF STOCKS TO INITIALIZE SCANNING
+#GETS UPLOADED TO DB IN TABLE - 
+lastTwoWeeks = df_sp_prices.tail(14)
+
+#%% PART 7: PLOT GRAPHS
+#COMBINED GRAPH OF TOTAL DATA AND 
+#PINAPPLE HAS TO BE CAREFULLY INTERPRETTED - FOR EACH BIN, I HAVE AVERAGED ALL OF THE INTERCONNECTEDNESS VALUES
+pineapple = [[x, w] for x,w in returnsHistogramAverages.items()]
+pineapple_df = pd.DataFrame(pineapple, columns=['Return Multiplier Bin', 'Interconnectedness Average'])
+pineapple_df.describe()
+fig2 = px.scatter(pineapple_df, x="Interconnectedness Average", y="Return Multiplier Bin", color="Return Multiplier Bin", template="plotly_dark")
+fig2.show()
+fig2.write_image('img1.png')
+
+cheese = [[x,v['mean']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
+gouda = [[x,v['LQ']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
+swiss = [[x,v['UQ']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
+cheddar = [[x,v['5th']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
+edam = [[x,v['median']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
+
+cheese_df = pd.DataFrame(cheese, columns=['Interconnectedness', 'Return Multiplier'])
+gouda_df = pd.DataFrame(gouda, columns=['Interconnectedness', 'Return Multiplier'])
+swiss_df = pd.DataFrame(swiss, columns=['Interconnectedness', 'Return Multiplier'])
+cheddar_df = pd.DataFrame(cheddar, columns=['Interconnectedness', 'Return Multiplier'])
+edam_df = pd.DataFrame(edam, columns=['Interconnectedness', 'Return Multiplier'])
+
+f1 = px.line(cheese_df, x="Interconnectedness", y="Return Multiplier")
+f1.update_traces(line_color='navy')
+f2 = px.line(gouda_df, x="Interconnectedness", y="Return Multiplier" )
+f2.update_traces(line_color='crimson')
+f3 = px.line(swiss_df, x="Interconnectedness", y="Return Multiplier")
+f3.update_traces(line_color='teal')
+f4 = px.line(cheddar_df, x="Interconnectedness", y="Return Multiplier")
+f4.update_traces(line_color='aqua')
+f5 = px.line(edam_df, x="Interconnectedness", y="Return Multiplier")
+f5.update_traces(line_color='purple')
+f6 = px.scatter(eggies_df, x="Interconnectedness", y="Return Multiplier", color="Return Multiplier")
+
+combined = make_subplots(x_title="Interconnectedness", y_title="Return Multiplier", )
+combined.add_traces(f1.data + f2.data + f3.data + f4.data + f5.data+ f6.data)
+combined.update_layout(template="plotly_dark")
+combined.show()
+combined.write_image('img2.png')
+
+#%% PLOT - TOTAL DATA PLOT WITH STATISTICAL ANALYSIS 
+
+# %% PART 8: GENERATE THE FOLLOWING GRAPHS
+lastTwoWeeks
+# %%
+interconnectednessHistogram.keys()
+# %%
+max(eggies_df['Interconnectedness'])
 # %%
