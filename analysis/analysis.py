@@ -243,9 +243,10 @@ for steak,val in stockReturnsList.items():
 stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier'])}
 
 #Save to dataframe and to csv and create table schema
-stockReturn_df = pd.DataFrame.from_dict(stockReturnMetricsList)
+# print(stockReturnMetricsList)
+stockReturn_df = pd.DataFrame.transpose(pd.DataFrame.from_dict(stockReturnMetricsList))
 stockReturn_df.to_csv('df_stock_return_risk.csv', header=stockReturn_df.columns, index=True , encoding='utf-8')
-
+# print(pd.DataFrame.transpose(stockReturn_df))
 ####################TABLE SCHEMA
 print('Finished risk reward csv and schema')
 
@@ -258,7 +259,7 @@ lastFetchDate = lastSixWeeks.iloc[-1][0]
 def arrayToString(array):
     str = ''
     for item in array:
-        str += f'{item},'
+        str += f'{item} '
     return str[:-1]
 sixWeeks = {}
 
@@ -280,8 +281,7 @@ lastSixWeeks_df.to_csv('df_last_six_weeks.csv', header=lastSixWeeks_df.columns, 
 ####################TABLE SCHEMA
 print('finished making last 6 weeks csv and shema')
 
-#%%
-lastSixWeeks_df
+
 
 #%% PART 7: PLOT GRAPHS
 #COMBINED GRAPH OF TOTAL DATA AND 

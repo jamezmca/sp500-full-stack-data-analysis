@@ -13,7 +13,7 @@ from pytrends.request import TrendReq
 def clenseArray(array): #CLEAN HEADERS/COL NAMES
     array = [x.lower().replace(" ", "_")\
         .replace("-","_").replace("?","_").replace(r"/", "_").replace('.', '').replace("\'s", 's')\
-        .replace(")", "").replace(r"(", "").replace("%", "").replace('all', 'all_')\
+        .replace(")", "").replace(r"(", "").replace("%", "").replace('all', 'all_').replace(',',"")\
         .replace("?", "").replace("\\", "_").replace("$","").replace('&',"and").replace("'", '').replace("3m", '"3m"') for x in array]
     return array
 
@@ -47,3 +47,5 @@ df_sp_prices.to_csv('df_sp_prices.csv', header=df_sp_prices.columns, index=True 
 
 print('Fetch Data Complete')
 
+
+# %%
