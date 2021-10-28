@@ -241,14 +241,17 @@ for steak,val in stockReturnsList.items():
         }
 # stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier']) if k > 0.6 and k < 2}
 stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items(), key=lambda item: item[1]['avgMultiplier'])}
-
+stockReturn_List = [[x,v['risk'],v['avgMultiplier']] for x,v in stockReturnMetricsList.items()]
+stockReturn_df = pd.DataFrame(stockReturn_List, columns=["stock", "risk", "avg_multipler"])
 #Save to dataframe and to csv and create table schema
 # print(stockReturnMetricsList)
-stockReturn_df = pd.DataFrame.transpose(pd.DataFrame.from_dict(stockReturnMetricsList))
+# stockReturn_df = pd.DataFrame.transpose(pd.DataFrame.from_dict(stockReturnMetricsList))
 stockReturn_df.to_csv('df_stock_return_risk.csv', header=stockReturn_df.columns, index=True , encoding='utf-8')
 # print(pd.DataFrame.transpose(stockReturn_df))
 ####################TABLE SCHEMA
 print('Finished risk reward csv and schema')
+#%%
+stockReturn_df
 
 # %% PART 6: MOST RECENT 6 WEEKS OF STOCKS TO INITIALIZE SCANNING
 #GETS UPLOADED TO DB IN TABLE - 
