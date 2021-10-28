@@ -1,10 +1,11 @@
-#%% FETCH DATA FROM YFINANCE
+#%% FETCH DATA FROM YFINANCE (might also want to fetch sp500)
 #source myenv/bin/activate
 import os
 import numpy as np
 import pandas as pd
-import pytrends
+# import pytrends
 import yfinance as yf
+import math
 import requests
 from datetime import datetime
 from pytrends.request import TrendReq
@@ -20,7 +21,6 @@ def clenseArray(array): #CLEAN HEADERS/COL NAMES
 #CREATE DICTIONARY OF NAMES
 sp_wiki_url = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
 sp_wiki_df_list = pd.read_html(sp_wiki_url)
-print(sp_wiki_df_list)
 sp_df = sp_wiki_df_list[0]
 sp_ticker_list = list(sp_df['Symbol'].values)
 sp_name_list = list(sp_df['Security'].values)
@@ -32,11 +32,18 @@ df.to_csv("dictionary.csv")
 df_sp_values = yf.download(sp_ticker_list, start="2016-01-01")
 
 #TAKE ADJ CLOSE VALUES AND TURN INTO DF
-df_sp_prices = df_sp_values['Adj Close']
+def checkIfNan(df): 
+    #could also use .tal
+    fin = df.iloc[-1]
+    if math.isnan(fin[1]) and math.isnan(fin[5]):
+        return df.iloc[:-1]
+    return df
+
+df_sp_prices = checkIfNan(df_sp_values['Adj Close'])
 df_sp_prices.columns = clenseArray(df_sp_prices.columns)
 
 #SAVE TO CSV FILE
 df_sp_prices.to_csv('df_sp_prices.csv', header=df_sp_prices.columns, index=True , encoding='utf-8')
 
 print('Fetch Data Complete')
-# %%
+
