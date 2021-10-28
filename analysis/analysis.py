@@ -251,12 +251,38 @@ print('Finished risk reward csv and schema')
 
 # %% PART 6: MOST RECENT 6 WEEKS OF STOCKS TO INITIALIZE SCANNING
 #GETS UPLOADED TO DB IN TABLE - 
-lastSixWeeks_df = df_sp_prices.tail(30)
+lastSixWeeks = df_sp_prices.tail(30)
+lastFetchDate = lastSixWeeks.iloc[-1][0]
+
 #SAVE TO CSV AND ALSO CREATE TABLE SCHEMA CSV
+def arrayToString(array):
+    str = ''
+    for item in array:
+        str += f'{item},'
+    return str[:-1]
+sixWeeks = {}
+
+lastSixWeeks_list = []
+for stonk,vals in lastSixWeeks.items():
+    if stonk != 'Date':
+        strang = arrayToString(vals)
+        sixWeeks[stonk] = strang
+
+        lastSixWeeks_list.append(
+            [newDict[stonk], lastFetchDate, strang]
+        )
+    
+print(lastFetchDate)
+
+lastSixWeeks_df = pd.DataFrame(np.row_stack(lastSixWeeks_list), columns=['name', 'last_fetch_date', 'prices'])
 lastSixWeeks_df.to_csv('df_last_six_weeks.csv', header=lastSixWeeks_df.columns, index=False , encoding='utf-8')
 
 ####################TABLE SCHEMA
 print('finished making last 6 weeks csv and shema')
+
+#%%
+lastSixWeeks_df
+
 #%% PART 7: PLOT GRAPHS
 #COMBINED GRAPH OF TOTAL DATA AND 
 #PINAPPLE HAS TO BE CAREFULLY INTERPRETTED - FOR EACH BIN, I HAVE AVERAGED ALL OF THE INTERCONNECTEDNESS VALUES
@@ -313,7 +339,7 @@ encoded_df = pd.DataFrame(encoded.items(), columns=['png', 'code'])
 encoded_df.to_csv('df_encoded.csv', header=encoded_df.columns, index=False , encoding='utf-8')
 
 ####################TABLE SCHEMA
-
+print('finito making base64 encoded img csv and shema')
 
 # %% PART 9(OPTIONAL): RUN THE LATEST ANALYSIS TO FIND WHICH CURRENT STOCKS ARE DOWN
 storks = list()

@@ -5,9 +5,26 @@ import asyncio
 import nest_asyncio
 from datetime import datetime
 from dotenv import load_dotenv
-
 load_dotenv('.env')
 nest_asyncio.apply()
+
+#THE THREE TABLES ARE 
+#last_six_weeks
+    #stock_id SERIAL PRIMARY KEY
+    #name VARCHAR,
+    #last_fetched_date DATE,
+    #prices VARCHAR
+
+#risk_reward
+    #stock_id SERIAL PRIMARY KEY
+    #name VARCHAR,
+    #risk FLOAT,
+    #reward FLOAT
+
+#png_files
+    #name VARCHAR,
+    #encode VARCHAR
+
 
 #UPLOAD DATA TO POSTGRESQL DATABASE IN GOOGLE CLOUD
 #USER AUTH FOR GOOGLE CLOUD DATABASE FROM ENVIRONMENT VARIABLES
@@ -16,7 +33,23 @@ password = os.getenv("PASSWORD")
 database = os.getenv("DATABASE")
 host = os.getenv("HOST")
 
-data_sets = ['df_sp_prices.csv', 'df_sp_searches.csv', '']
+schemas = {'df_last_six_weeks': '''
+    stock_id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    lastFetched DATE,
+    prices VARCHAR
+''',
+'df_stock_return_risk': '''
+    stock_id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    risk NUMERIC,
+    reward NUMERIC
+''',
+'df_encoded': '''
+    name VARCHAR(255),
+    encode VARCHAR
+'''}
+
 
 csv_files = []
 for file in os.listdir(os.getcwd()):
