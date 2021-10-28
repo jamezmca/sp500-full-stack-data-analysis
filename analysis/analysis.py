@@ -1,6 +1,5 @@
 #%% INITIALIZE
-# import os
-from re import template
+import os
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -10,6 +9,7 @@ from datetime import date
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+import base64
 
 #Import from functions.py
 
@@ -246,15 +246,17 @@ stockReturnMetricsList = {k: v for k, v in sorted(stockReturnMetricsList.items()
 stockReturn_df = pd.DataFrame.from_dict(stockReturnMetricsList)
 stockReturn_df.to_csv('df_stock_return_risk.csv', header=stockReturn_df.columns, index=True , encoding='utf-8')
 
+####################TABLE SCHEMA
+print('Finished risk reward csv and schema')
 
-print('Finished part 5 of analysis')
-
-# %% PART 6: MOST RECENT TWO WEEKS OF STOCKS TO INITIALIZE SCANNING
+# %% PART 6: MOST RECENT 6 WEEKS OF STOCKS TO INITIALIZE SCANNING
 #GETS UPLOADED TO DB IN TABLE - 
-lastTwoWeeks = df_sp_prices.tail(14)
-print(lastTwoWeeks)
+lastSixWeeks_df = df_sp_prices.tail(30)
 #SAVE TO CSV AND ALSO CREATE TABLE SCHEMA CSV
+lastSixWeeks_df.to_csv('df_last_six_weeks.csv', header=lastSixWeeks_df.columns, index=False , encoding='utf-8')
 
+####################TABLE SCHEMA
+print('finished making last 6 weeks csv and shema')
 #%% PART 7: PLOT GRAPHS
 #COMBINED GRAPH OF TOTAL DATA AND 
 #PINAPPLE HAS TO BE CAREFULLY INTERPRETTED - FOR EACH BIN, I HAVE AVERAGED ALL OF THE INTERCONNECTEDNESS VALUES
@@ -263,7 +265,7 @@ pineapple_df = pd.DataFrame(pineapple, columns=['Return Multiplier Bin', 'Interc
 pineapple_df.describe()
 fig2 = px.scatter(pineapple_df, x="Interconnectedness Average", y="Return Multiplier Bin", color="Return Multiplier Bin", template="plotly_dark")
 fig2.show() #pip install kaleido
-fig2.write_image('img1.png')
+# fig2.write_image('img1.png')
 
 cheese = [[x,v['mean']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
 gouda = [[x,v['LQ']] for x,v in interconnectednessHistogramSmoothMetrics.items()]
@@ -293,11 +295,27 @@ combined = make_subplots(x_title="Interconnectedness", y_title="Return Multiplie
 combined.add_traces(f1.data + f2.data + f3.data + f4.data + f5.data+ f6.data)
 combined.update_layout(template="plotly_dark")
 combined.show()
-combined.write_image('img2.png') #pip install kaleido
+# combined.write_image('img2.png') #pip install kaleido
 
 #%% PART 8: CONVERT IMAGES TO BASE 64ENCODING
+png_files = []
+for file in os.listdir(os.getcwd()):
+    if file.endswith('.png'):
+        png_files.append(file)
 
-# %% PART 9: RUN THE LATEST ANALYSIS TO FIND WHICH CURRENT STOCKS ARE DOWN
+encoded = {}
+for png in png_files:
+    with open(png, "rb") as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+        encoded[png] = encoded_string
+
+encoded_df = pd.DataFrame(encoded.items(), columns=['png', 'code'])
+encoded_df.to_csv('df_encoded.csv', header=encoded_df.columns, index=False , encoding='utf-8')
+
+####################TABLE SCHEMA
+
+
+# %% PART 9(OPTIONAL): RUN THE LATEST ANALYSIS TO FIND WHICH CURRENT STOCKS ARE DOWN
 storks = list()
 last40Days = df_sp_prices.tail(30)
 for sterk,val in last40Days.items():
@@ -313,8 +331,4 @@ for sterk,val in last40Days.items():
             if delta > 0 and maxVal / minVal > 1.20:
                 print(sterk, delta)
                 storks.append(sterk)
-# %%
-storks
-# %%
-max(eggies_df['Interconnectedness'])
-# %%
+print(storks)
