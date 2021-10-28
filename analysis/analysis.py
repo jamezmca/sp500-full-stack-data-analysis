@@ -116,6 +116,8 @@ spAvgPricePerWkBin = sp500AvgPrice(spWkBins, df_sp_price['price'])
 
 print(f'finished part 1 for analysis range: {xRange} weeks')
 
+#%%
+weekBins
 #%% PART 2: CREATE HISTOGRAM OF RETURN MULTIPLIER AND AVERAGE INTERCONNECTEDNESS FROM LIST OF ASSOCIATES INTERCONNECTEDNESSES
 
 returnsHistogramLists = dict()
@@ -190,6 +192,7 @@ interconnectednessHistogram, interconnectednessHistogramSmooth, interconnectedne
 
 print(f'finished part 3 for analysis finished finding {len(interconnectednessHistogramSmooth.keys())} drops')
 
+
 #%% PART 4: CREATE A DICTIONARY OF EVERY MULTIPLER AND INTERCONNECTEDNESS VALUE AND RUN REGRESSION MODEL
 interconnectednessReturn = dict()
 for intercon, val in interconnectednessHistogramSmooth.items():
@@ -249,7 +252,7 @@ print('Finished part 5 of analysis')
 # %% PART 6: MOST RECENT TWO WEEKS OF STOCKS TO INITIALIZE SCANNING
 #GETS UPLOADED TO DB IN TABLE - 
 lastTwoWeeks = df_sp_prices.tail(14)
-
+print(lastTwoWeeks)
 #SAVE TO CSV AND ALSO CREATE TABLE SCHEMA CSV
 
 #%% PART 7: PLOT GRAPHS
@@ -294,10 +297,24 @@ combined.write_image('img2.png') #pip install kaleido
 
 #%% PART 8: CONVERT IMAGES TO BASE 64ENCODING
 
-# %% PART 8: GENERATE THE FOLLOWING GRAPHS
-lastTwoWeeks
+# %% PART 9: RUN THE LATEST ANALYSIS TO FIND WHICH CURRENT STOCKS ARE DOWN
+storks = list()
+last40Days = df_sp_prices.tail(30)
+for sterk,val in last40Days.items():
+
+    if sterk != 'Date':
+
+        maxVal = max(val)
+        minVal = min(val)
+        if (not math.isnan(maxVal)) and (not math.isnan(minVal)):
+            maxValIndex = list(val).index(maxVal)
+            minValIndex = list(val).index(minVal)
+            delta = minValIndex - maxValIndex
+            if delta > 0 and maxVal / minVal > 1.20:
+                print(sterk, delta)
+                storks.append(sterk)
 # %%
-interconnectednessHistogram.keys()
+storks
 # %%
 max(eggies_df['Interconnectedness'])
 # %%
