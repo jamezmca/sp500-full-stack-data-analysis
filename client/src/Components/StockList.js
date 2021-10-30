@@ -48,6 +48,8 @@ export default function StockList() {
             name: stock.name.toUpperCase().replace('_', " "),
             decPerc: 100 - (minPrice * 100 / maxPrice),
             maxPrice,
+            maxIndex,
+            minIndex,
             minPrice,
             daysSinceMin: arrayOfPrices.length - minIndex,
             gradient: (100 - (minPrice * 100 / maxPrice)) / delta
