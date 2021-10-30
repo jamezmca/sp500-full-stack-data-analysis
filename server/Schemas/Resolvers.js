@@ -1,10 +1,11 @@
 //connect with DB in here
 const pool = require('../db')
+//localhost:5000/graphql
 
 //1st - query database for all latest data points
 //2nd - check what data is or is not there
 //3rd - post any additional data to the database
-// 
+// df_last_six_weeks | df_encoded | df_stock_return_risk
 
 const resolvers = {
     Query: {
@@ -12,12 +13,8 @@ const resolvers = {
             const client = await pool.connect()
             let persist
             try {
-                const res = await client.query('SELECT * FROM twoweekprices')
-                persist = res.rows.map(row => {
-                    console.log(row)
-                    return row
-                })
-                console.log(persist)
+                const res = await client.query('SELECT * FROM df_last_six_weeks')
+                persist = res.rows.map(row => row)
             } catch (err) {
                 console.log(err)
             } finally {
@@ -25,10 +22,39 @@ const resolvers = {
                 // just in case the error handling itself throws an error.
                 client.release()
                 return persist
-
             }
         },
-        practice: () => ([{ name: "hello", married: true }]),
+        getPngs: async () => {
+            const client = await pool.connect()
+            let persist
+            try {
+                const res = await client.query('SELECT * FROM df_encoded')
+                persist = res.rows.map(row => row)
+            } catch (err) {
+                console.log(err)
+            } finally {
+                // Make sure to release the client before any error handling,
+                // just in case the error handling itself throws an error.
+                client.release()
+                return persist
+            }
+        },
+        getRiskReward: async () => {
+            const client = await pool.connect()
+            let persist
+            try {
+                const res = await client.query('SELECT * FROM df_stock_return_risk')
+                persist = res.rows.map(row => row)
+            } catch (err) {
+                console.log(err)
+            } finally {
+                // Make sure to release the client before any error handling,
+                // just in case the error handling itself throws an error.
+                client.release()
+                return persist
+            }
+        }
+        // practice: () => ([{ name: "hello", married: true }]),
 
     },
     Mutation: {

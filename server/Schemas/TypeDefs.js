@@ -2,55 +2,36 @@ const { gql } = require('apollo-server-express')
 
 const typeDefs = gql`
     type Stock {
-        stock_id: Int!
         name: String!
-        price1: Int!
-        price2: Int!
-        price3: Int!
-        price4: Int!
-        price5: Int!
-        price6: Int!
-        price7: Int!
-        price8: Int!
-        price9: Int!
-        price10: Int!
-        price11: Int!
-        price12: Int!
-        price13: Int!
-        price14: Int!
+        lastfetched: String!
+        prices: String!
     }
 
     type AddStock {
         name: String!
         price1: Int!
         price2: Int!
-        price3: Int!
-        price4: Int!
-        price5: Int!
-        price6: Int!
-        price7: Int!
-        price8: Int!
-        price9: Int!
-        price10: Int!
-        price11: Int!
-        price12: Int!
-        price13: Int!
-        price14: Int!
     }
 
-    type Handy {
+    type Pngs {
         name: String!
-        married: Boolean!
+        encode: String!
     }
 
+    type Risk {
+        name: String!
+        reward: Float
+        risk: Float
+    }
     #can make several types in here
     
     #Queries
     type Query {
-        getAllStockPrices: [Stock!]!,         #Returns a list of users
-        practice: [Handy!]!,
+        getAllStockPrices: [Stock!]!,   
+        getPngs: [Pngs!]!,
+        getRiskReward: [Risk!]!
+      #Returns a list of users
     }
-
 
     #Mutations
     type Mutation {
@@ -59,18 +40,7 @@ const typeDefs = gql`
             name: String!, 
             price1: Int!,
             price2: Int!,
-            price3: Int!,
-            price4: Int!,
-            price5: Int!,
-            price6: Int!,
-            price7: Int!,
-            price8: Int!,
-            price9: Int!,
-            price10: Int!,
-            price11: Int!,
-            price12: Int!,
-            price13: Int!,
-            price14: Int!
+
             ): Stock!
     }
 `//can create several types in here
