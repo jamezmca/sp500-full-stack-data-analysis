@@ -48,6 +48,8 @@ export default function BarChart({ data }) {
                             'rgba(255,99,132,1)',
                         ],
                         borderWidth: 1,
+                        borderRadius: 5,
+
                     }
 
                 ],
@@ -55,15 +57,18 @@ export default function BarChart({ data }) {
                     scales: {
                         A: {
                             type: 'linear',
-                            position: 'left',
+                            display: true,
+                            position: 'right',
 
                         },
                         B: {
                             type: 'linear',
+                            display: true,
                             position: 'right',
 
                         }
-                    }
+                    },
+                    
                   }
             }}
             height={400}
