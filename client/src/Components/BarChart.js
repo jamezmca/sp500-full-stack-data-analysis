@@ -3,13 +3,13 @@ import { Bar } from 'react-chartjs-2';
 
 export default function BarChart({ data }) {
     let risky = data.getRiskReward
-    let aloha = risky.sort
+    // let aloha = risky.sort
 
-    console.log('risky', aloha)
+    // console.log('risky', aloha)
     const labels = risky.map(label => label.name.replaceAll('_', ' ')).slice(-15)
     const risk = risky.map(label => label.risk).slice(-15)
     const reward = risky.map(label => label.reward).slice(-15)
-    console.log(risk)
+    // console.log(risk)
     return (
         <Bar
             data={{

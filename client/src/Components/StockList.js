@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { useQuery, gql } from "@apollo/client"
 import { GET_STOCKS_LIST } from '../GraphQL/Queries'
-import { introspectionFromSchema } from 'graphql';
+import { fetchData } from '../api'
 import Stock from './Stock';
 //information will be stock_id | name | lastfetched | 'prices x 14 in CSV format'
 
@@ -15,14 +15,17 @@ export default function StockList() {
   useEffect(() => {
     if (!loading) {
       const lastFetchedDate = data.getAllStockPrices[0].lastfetched
-      console.log(lastFetchedDate)
+      // console.log(lastFetchedDate)
       var d = new Date(0)
       d.setUTCMilliseconds(lastFetchedDate)
-      console.log(d)
+      // console.log(d)
 
       //and here run new function if dates are different
       // IF NOT TODAy {} ETC
+      fetchData(d)
     }
+
+
   })
 
   if (!loading) {
@@ -43,7 +46,7 @@ export default function StockList() {
         let delta = minIndex - maxIndex
         let devaluation = maxPrice / minPrice
         if (delta > 0 && devaluation > 1.2) {
-          console.log(stock.name, maxPrice, minPrice, maxIndex, minIndex, delta, devaluation)
+          // console.log(stock.name, maxPrice, minPrice, maxIndex, minIndex, delta, devaluation)
           let temp = {
             name: stock.name.toUpperCase().replace('_', " "),
             decPerc: 100 - (minPrice * 100 / maxPrice),
@@ -58,10 +61,10 @@ export default function StockList() {
           if (temp.daysSinceMin <= 10) interconnectednessCount++
         }
       }
-      return {arrayOfBombStocks, interconnectednessCount}
+      return { arrayOfBombStocks, interconnectednessCount }
     }
     // console.log(data.getAllStockPrices)
-    let {arrayOfBombStocks: bombStocks, interconnectednessCount: count} = findBombStocks(data.getAllStockPrices, 2)
+    let { arrayOfBombStocks: bombStocks, interconnectednessCount: count } = findBombStocks(data.getAllStockPrices, 2)
 
 
     return (
