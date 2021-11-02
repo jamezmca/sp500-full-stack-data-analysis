@@ -60,7 +60,7 @@ avy,avery_dennison
 bkr,baker_hughes
 bll,ball__corp
 bac,bank_of_america
-bbwi,bath_and_body_works_inc
+bbwi,bath_and_body_works
 bax,baxter_international
 bdx,becton_dickinson
 brkb,berkshire_hathaway
@@ -84,7 +84,7 @@ chrw,c_h_robinson
 cdns,cadence_design_systems
 czr,caesars_entertainment
 cpb,campbell_soup
-cof,capital_one_financial
+cof,capital_one
 cah,cardinal_health
 kmx,carmax
 ccl,carnival_corporation
@@ -95,15 +95,15 @@ cboe,cboe_global_markets
 cbre,cbre
 cdw,cdw
 ce,celanese
-cnc,centene_corporation
+cnc,centene
 cnp,centerpoint_energy
 cday,ceridian
 cern,cerner
 cf,cf_industries
 crl,charles_river_laboratories
-schw,charles_schwab_corporation
+schw,charles_schwab
 chtr,charter_communications
-cvx,chevron_corporation
+cvx,chevron
 cmg,chipotle_mexican_grill
 cb,chubb
 chd,church_and_dwight
@@ -117,7 +117,7 @@ ctxs,citrix_systems
 clx,clorox
 cme,cme_group
 cms,cms_energy
-ko,coca_cola_company
+ko,coca_cola
 ctsh,cognizant_technology_solutions
 cl,colgate_palmolive
 cmcsa,comcast
@@ -137,7 +137,7 @@ csx,csx
 cmi,cummins
 cvs,cvs_health
 dhi,d_r_horton
-dhr,danaher_corporation
+dhr,danaher
 dri,darden_restaurants
 dva,davita
 de,deere_and_co
@@ -169,7 +169,7 @@ ecl,ecolab
 eix,edison_international
 ew,edwards_lifesciences
 ea,electronic_arts
-emr,emerson_electric_company
+emr,emerson_electric
 enph,enphase_energy
 etr,entergy
 eog,eog_resources
@@ -287,7 +287,7 @@ lvs,las_vegas_sands
 leg,leggett_and_platt
 ldos,leidos
 len,lennar
-lly,eli_lilly_and_co
+lly,eli_lilly
 lnc,lincoln_national
 lin,linde
 lyv,live_nation_entertainment
@@ -311,7 +311,7 @@ mkc,mccormick_and_company
 mcd,mcdonalds
 mck,mckesson_corporation
 mdt,medtronic
-mrk,merck_and_co
+mrk,merck
 met,metlife
 mtd,mettler_toledo
 mgm,mgm_resorts_international
@@ -321,11 +321,11 @@ msft,microsoft
 maa,mid_america_apartments
 mrna,moderna
 mhk,mohawk_industries
-tap,molson_coors_beverage_company
+tap,molson_coors
 mdlz,mondelez_international
 mpwr,monolithic_power_systems
 mnst,monster_beverage
-mco,moodys_corporation
+mco,moodys
 ms,morgan_stanley
 mos,the_mosaic_company
 msi,motorola_solutions
@@ -435,7 +435,7 @@ tmus,t_mobile_us
 trow,t_rowe_price
 ttwo,take_two_interactive
 tpr,tapestry
-tgt,target_corporation
+tgt,target
 tel,te_connectivity
 tdy,teledyne_technologies
 tfx,teleflex

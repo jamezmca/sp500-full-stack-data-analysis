@@ -346,7 +346,7 @@ print('finito making base64 encoded img csv and shema')
 
 # %% PART 9(OPTIONAL): RUN THE LATEST ANALYSIS TO FIND WHICH CURRENT STOCKS ARE DOWN
 storks = list()
-last40Days = df_sp_prices.tail(30)
+last40Days = df_sp_prices.tail(15)
 for sterk,val in last40Days.items():
 
     if sterk != 'Date':
@@ -357,7 +357,8 @@ for sterk,val in last40Days.items():
             maxValIndex = list(val).index(maxVal)
             minValIndex = list(val).index(minVal)
             delta = minValIndex - maxValIndex
-            if delta > 0 and maxVal / minVal > 1.20:
-                print(sterk, delta)
+            if delta > 0 and maxVal / minVal > 1.15:
+                print(sterk, delta, 1 - minVal / maxVal)
                 storks.append(sterk)
 print(storks)
+# %%
