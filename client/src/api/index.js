@@ -1,23 +1,15 @@
+const axios = require('axios')
 
-export async function fetchData(lFD) { 
-    // console.log(dictionary)
-    async function getData() { 
-        const response = await fetch("dictionary.csv"); 
-        const data = await response.text(); 
+export async function fetchData(steak) { 
+
+    const apiKey = process.env.REACT_APP_API_KEY
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=${steak}&apikey=${apiKey}`
+    try {
+        let response = await fetch(url)
+        let data = await response.json()
         console.log(data)
-       } 
-       getData()
-    //fetches new stock data from alphavantage 
-
-
-    // const url = ''
-    // const apiKey = process.env.REACT_APP_API_KEY
-    // try {
-    //     let response = await fetch(url)
-    //     let data = await response.json()
-
-    //     return data
-    // } catch (err) {
-    //     console.log(err)
-    // }
+        return data
+    } catch (err) {
+        console.log(err)
+    }
 }

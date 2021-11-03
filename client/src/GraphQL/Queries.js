@@ -26,3 +26,11 @@ query Query {
   }
 }
 `
+
+export const GET_LIST_OF_STOCKS = gql`
+query Query {
+  getStockList {
+    names
+  }
+}
+`

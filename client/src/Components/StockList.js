@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useQuery, gql } from "@apollo/client"
-import { GET_STOCKS_LIST } from '../GraphQL/Queries'
+import { GET_STOCKS_LIST, GET_LIST_OF_STOCKS } from '../GraphQL/Queries'
 import { fetchData } from '../api'
 import Stock from './Stock';
 //information will be stock_id | name | lastfetched | 'prices x 14 in CSV format'
@@ -10,23 +10,30 @@ import Stock from './Stock';
 
 
 export default function StockList() {
-  const { loading, error, data } = useQuery(GET_STOCKS_LIST);
+  const { loading, error, data } = useQuery(GET_STOCKS_LIST)
+  const { loading: loading2, error: error2, data: steakList } = useQuery(GET_LIST_OF_STOCKS)
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !loading2) {
       const lastFetchedDate = data.getAllStockPrices[0].lastfetched
-      // console.log(lastFetchedDate)
-      var d = new Date(0)
+      let d = new Date(0)
       d.setUTCMilliseconds(lastFetchedDate)
-      // console.log(d)
+      let dStr = String(d).split(' ')[1] + String(d).split(' ')[2] + String(d).split(' ')[3]
 
+      const today = new Date()
+      let todayStr = String(today).split(' ')[1] + String(today).split(' ')[2] + String(today).split(' ')[3]
       //and here run new function if dates are different
       // IF NOT TODAy {} ETC
-      fetchData(d)
+      // fetchData(d)
+      if (dStr !== todayStr) {
+        console.log(steakList)
+        let steakArr = steakList.getStockList.names.split(' ')
+        fetchData(steakArr[0])
+      }
     }
 
 
-  })
+  }, [loading2, loading2])
 
   if (!loading) {
     function findBombStocks(stocks, weeks) {

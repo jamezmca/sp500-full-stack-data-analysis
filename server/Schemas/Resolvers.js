@@ -1,6 +1,8 @@
 //connect with DB in here
 const pool = require('../db')
 //localhost:5000/graphql
+const axios = require('axios')
+const cheerio = require('cheerio')
 
 //1st - query database for all latest data points
 //2nd - check what data is or is not there
@@ -53,6 +55,18 @@ const resolvers = {
                 client.release()
                 return persist
             }
+        },
+        getStockList: async (_, args) => {
+            console.log('args', args)
+            let url = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+            const { data } = await axios.get(url, {
+                headers: {
+                    'Access-Control-Allow-Origin': '*',
+                },
+            })
+            const $ = cheerio.load(data)
+            const listOfStocks = $('tbody tr td .external').text().replaceAll('reports', " ")
+            return {names: listOfStocks}
         }
         // practice: () => ([{ name: "hello", married: true }]),
 

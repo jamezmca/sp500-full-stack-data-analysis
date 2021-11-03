@@ -23,13 +23,19 @@ const typeDefs = gql`
         reward: Float
         risk: Float
     }
+
+    type stockList {
+        names: String!
+    }
     #can make several types in here
     
     #Queries
     type Query {
         getAllStockPrices: [Stock!]!,   
         getPngs: [Pngs!]!,
-        getRiskReward: [Risk!]!
+        getRiskReward: [Risk!]!,
+        getStockList: stockList!
+
       #Returns a list of users
     }
 
