@@ -27,13 +27,26 @@ export default function StockList() {
       // fetchData(d)
       if (dStr !== todayStr) {
         console.log(steakList)
+        let dataToUpload = []
         let steakArr = steakList.getStockList.names.split(' ')
-        fetchData(steakArr[0])
+        
+
+          // dataToUpload = {name: steak, lastfetched: todayStr, prices: fetchData(steak)}
+        function awaitAll() {
+          const promises = [];
+        
+          for (const steak of steakArr) {
+            promises.push(fetchData(steak));
+          }
+        
+          return Promise.all(promises);
+        }
+          
       }
     }
 
 
-  }, [loading2, loading2])
+  }, [loading, loading2, data?.getAllStockPrices, steakList])
 
   if (!loading) {
     function findBombStocks(stocks, weeks) {
