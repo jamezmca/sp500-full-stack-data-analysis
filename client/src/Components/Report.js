@@ -52,7 +52,7 @@ export default function Report() {
             setHehe(true)
         }
     }, [data, loadingPngs, loadingRisk])
-
+    console.log(dataRisk)
 
     return (
         <div className="">

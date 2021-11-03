@@ -53,6 +53,7 @@ const resolvers = {
                 // Make sure to release the client before any error handling,
                 // just in case the error handling itself throws an error.
                 client.release()
+                // console.log('hello',persist)
                 return persist
             }
         },
@@ -66,7 +67,36 @@ const resolvers = {
             })
             const $ = cheerio.load(data)
             const listOfStocks = $('tbody tr td .external').text().replaceAll('reports', " ")
-            return {names: listOfStocks}
+            return { names: listOfStocks }
+        },
+        getStockHistory: async (_, args) => {
+            //args is an array of stocks
+            console.log('args', args)
+            let arguments = ['aapl', 'amzn', 'grmn']
+            let newFetchStockPrices = []
+            for (const ticker of arguments) {
+                let url = `https://finance.yahoo.com/quote/${ticker}/history?p=${ticker}`
+
+                const { data } = await axios.get(url, {
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                })
+                const $ = cheerio.load(data)
+                let regex
+                const strOfStocks = $('tbody tr td:nth-child(5)').text().split(/(\d*\.\d\d)/gi)
+                let listOfStocks = []
+                let prevIndex = 0
+                for (let i = 0; i < strOfStocks.length; i++) {
+                    if strOfStocks[i] == '.' {
+                        listOfStocks.push(strOfStocks.slice(prevIndex, i+2))
+                        prevIndex = i + 2
+                    }
+                }
+                console.log('hello',listOfStocks)
+            }
+
+            return []
         }
         // practice: () => ([{ name: "hello", married: true }]),
 

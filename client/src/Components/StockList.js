@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
-import { useQuery, gql } from "@apollo/client"
-import { GET_STOCKS_LIST, GET_LIST_OF_STOCKS } from '../GraphQL/Queries'
+import { useQuery, gql, useLazyQuery } from "@apollo/client"
+import { GET_STOCKS_LIST, GET_LIST_OF_STOCKS, GET_NEW_LIST_OF_STOCK_PRICES } from '../GraphQL/Queries'
 import { fetchData } from '../api'
 import Stock from './Stock';
 //information will be stock_id | name | lastfetched | 'prices x 14 in CSV format'
@@ -10,11 +10,12 @@ import Stock from './Stock';
 
 
 export default function StockList() {
-  const { loading, error, data } = useQuery(GET_STOCKS_LIST)
+  const { loading: loading1, error: error1, data: steakPricesOld } = useQuery(GET_STOCKS_LIST)
   const { loading: loading2, error: error2, data: steakList } = useQuery(GET_LIST_OF_STOCKS)
+  const [seek, { loading, error, data }] = useLazyQuery(GET_NEW_LIST_OF_STOCK_PRICES)
 
   useEffect(() => {
-    if (!loading && !loading2) {
+    if (!loading1 && !loading2) {
       const lastFetchedDate = data.getAllStockPrices[0].lastfetched
       let d = new Date(0)
       d.setUTCMilliseconds(lastFetchedDate)
@@ -29,26 +30,26 @@ export default function StockList() {
         console.log(steakList)
         let dataToUpload = []
         let steakArr = steakList.getStockList.names.split(' ')
-        
 
-          // dataToUpload = {name: steak, lastfetched: todayStr, prices: fetchData(steak)}
-        function awaitAll() {
-          const promises = [];
-        
-          for (const steak of steakArr) {
-            promises.push(fetchData(steak));
-          }
-        
-          return Promise.all(promises);
-        }
-          
+        seek()
+        // dataToUpload = {name: steak, lastfetched: todayStr, prices: fetchData(steak)}
+        // function awaitAll() {
+        //   const promises = [];
+
+        //   for (const steak of steakArr.splice(0,5)) {
+        //     promises.push(fetchData(steak));
+        //   }
+
+        //   return Promise.all(promises);
+        // }
+        // console.log(awaitAll())
       }
     }
 
 
-  }, [loading, loading2, data?.getAllStockPrices, steakList])
+  }, [loading1, loading2, data?.getAllStockPrices, steakList])
 
-  if (!loading) {
+  if (!loading1) {
     function findBombStocks(stocks, weeks) {
       let arrayOfBombStocks = []
       let interconnectednessCount = 0
@@ -84,7 +85,7 @@ export default function StockList() {
       return { arrayOfBombStocks, interconnectednessCount }
     }
     // console.log(data.getAllStockPrices)
-    let { arrayOfBombStocks: bombStocks, interconnectednessCount: count } = findBombStocks(data.getAllStockPrices, 2)
+    let { arrayOfBombStocks: bombStocks, interconnectednessCount: count } = findBombStocks(steakPricesOld.getAllStockPrices, 2)
 
 
     return (

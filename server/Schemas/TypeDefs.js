@@ -24,8 +24,13 @@ const typeDefs = gql`
         risk: Float
     }
 
-    type stockList {
+    type StockList {
         names: String!
+    }
+
+    type StockPrice {
+        name: String!,
+        prices: String!
     }
     #can make several types in here
     
@@ -34,7 +39,8 @@ const typeDefs = gql`
         getAllStockPrices: [Stock!]!,   
         getPngs: [Pngs!]!,
         getRiskReward: [Risk!]!,
-        getStockList: stockList!
+        getStockList: StockList!,
+        getStockHistory: [StockPrice!]!
 
       #Returns a list of users
     }
