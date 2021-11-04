@@ -40,7 +40,7 @@ const typeDefs = gql`
         getPngs: [Pngs!]!,
         getRiskReward: [Risk!]!,
         getStockList: StockList!,
-        getStockHistory: [StockPrice!]!
+        getStockHistory(lastfetched: String!): [StockPrice!]!
 
       #Returns a list of users
     }
@@ -53,7 +53,9 @@ const typeDefs = gql`
             price1: Int!,
             price2: Int!,
 
-            ): Stock!
+            ): Stock!,
+        clearInformation: Int!
+        
     }
 `//can create several types in here
 

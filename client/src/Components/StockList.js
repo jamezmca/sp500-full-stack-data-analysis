@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
-import { useQuery, gql, useLazyQuery } from "@apollo/client"
+import { useQuery, gql, useLazyQuery, useMutation } from "@apollo/client"
 import { GET_STOCKS_LIST, GET_LIST_OF_STOCKS, GET_NEW_LIST_OF_STOCK_PRICES } from '../GraphQL/Queries'
+import { UPDATE_STOCK_PRICES } from '../GraphQL/Mutations'
 import { fetchData } from '../api'
 import Stock from './Stock';
+import hello from './james.json'
 //information will be stock_id | name | lastfetched | 'prices x 14 in CSV format'
 
 
@@ -12,42 +14,50 @@ import Stock from './Stock';
 export default function StockList() {
   const { loading: loading1, error: error1, data: steakPricesOld } = useQuery(GET_STOCKS_LIST)
   const { loading: loading2, error: error2, data: steakList } = useQuery(GET_LIST_OF_STOCKS)
+  const [updateStocks, { error: errorMutation }] = useMutation(UPDATE_STOCK_PRICES)
+  // let steakListStr = ''
+  // for (let steak of steakList) {
+  //   steakListStr += steak + ' '
+  // }
   const [seek, { loading, error, data }] = useLazyQuery(GET_NEW_LIST_OF_STOCK_PRICES)
 
   useEffect(() => {
     if (!loading1 && !loading2) {
-      const lastFetchedDate = data.getAllStockPrices[0].lastfetched
+      const lastFetchedDate = steakPricesOld.getAllStockPrices[0].lastfetched
       let d = new Date(0)
       d.setUTCMilliseconds(lastFetchedDate)
-      let dStr = String(d).split(' ')[1] + String(d).split(' ')[2] + String(d).split(' ')[3]
+      let dDay = d.getDate()
+      let dMonth = d.getMonth()
+      let dYear = d.getFullYear()
+      let dStr = `${dYear}-${dMonth}-${dDay}`
 
       const today = new Date()
-      let todayStr = String(today).split(' ')[1] + String(today).split(' ')[2] + String(today).split(' ')[3]
+      let todayDay = today.getDate()
+      let todayMonth = today.getMonth()
+      let todayYear = today.getFullYear()
+      let todayStr = `${todayYear}-${todayMonth}-${todayDay}`
+      console.log(todayStr, dStr)
       //and here run new function if dates are different
       // IF NOT TODAy {} ETC
       // fetchData(d)
       if (dStr !== todayStr) {
         console.log(steakList)
         let dataToUpload = []
-        let steakArr = steakList.getStockList.names.split(' ')
+        // seek()
 
-        seek()
-        // dataToUpload = {name: steak, lastfetched: todayStr, prices: fetchData(steak)}
-        // function awaitAll() {
-        //   const promises = [];
 
-        //   for (const steak of steakArr.splice(0,5)) {
-        //     promises.push(fetchData(steak));
-        //   }
 
-        //   return Promise.all(promises);
-        // }
-        // console.log(awaitAll())
+        dataToUpload = hello.data.getStockHistory.map(({ name, prices }) => ({ name, lastfetched: todayStr, prices }))
+        console.log(dataToUpload)
+        updateStocks(dataToUpload)
+       
       }
     }
 
 
-  }, [loading1, loading2, data?.getAllStockPrices, steakList])
+  }, [loading, seek, loading1, loading2, steakPricesOld?.getAllStockPrices, steakList])
+
+  console.log('here', loading, data)
 
   if (!loading1) {
     function findBombStocks(stocks, weeks) {

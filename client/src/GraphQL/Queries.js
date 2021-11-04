@@ -37,8 +37,9 @@ query Query {
 
 export const GET_NEW_LIST_OF_STOCK_PRICES = gql`
 query Query {
-  getStockList {
-    names
+  getStockHistory{
+    name
+    prices
   }
 }
 `
