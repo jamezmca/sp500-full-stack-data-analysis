@@ -36,8 +36,8 @@ query Query {
 `
 
 export const GET_NEW_LIST_OF_STOCK_PRICES = gql`
-query Query {
-  getStockHistory{
+query Query ($lastfetched: String!) {
+  getStockHistory (lastfetched: $lastfetched){
     name
     prices
   }
