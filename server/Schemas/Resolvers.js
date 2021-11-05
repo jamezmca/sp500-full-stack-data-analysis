@@ -94,7 +94,7 @@ const resolvers = {
                             'Access-Control-Allow-Origin': '*',
                         },
                     })
-                    console.log('found stock data', ticker)
+                    // console.log('found stock data', ticker)
                     const $ = cheerio.load(data)
                     const strOfStocks = $('tbody tr td:nth-child(5)').text()
                     let listOfStocks = ""
@@ -104,6 +104,9 @@ const resolvers = {
                             listOfStocks += strOfStocks.slice(prevIndex, i + 3) + " "
                             prevIndex = i + 3
                         }
+                    }
+                    if (ticker == "TSLA") {
+                        console.log(strOfStocks)
                     }
                     newFetchStockPrices2.push({ name: ticker, prices: listOfStocks })
                 }))
@@ -120,53 +123,18 @@ const resolvers = {
                     for (let stack of newFetchStockPrices2) {
                         let demo = [stack.name, lastfetched, stack.prices]
                         const res = await client.query(`INSERT INTO df_last_six_weeks (${str}) VALUES ($1, $2, $3)`, demo)//don't need column name
-
                     }
-
-                    console.log('hello')
                 } catch (err) {
                     console.log(err)
                 } finally {
-                    // Make sure to release the client before any error handling,
-                    // just in case the error handling itself throws an error.
                     console.log('end of function')
                     client.release()
                 }
-
-
 
                 return newFetchStockPrices2
             }
 
             let newFetchStockPrices = getPrices(listOfStocks)
-            // for (const ticker of listOfStocks.split(' ')) {
-            //     if (ticker.length > 0) {
-            //         let url = `https://finance.yahoo.com/quote/${ticker}/history?p=${ticker}`
-
-            //         const { data } = await axios.get(url, {
-            //             headers: {
-            //                 'Access-Control-Allow-Origin': '*',
-            //             },
-            //         })
-            //         console.log('found stock data', ticker)
-            //         const $ = cheerio.load(data)
-            //         const strOfStocks = $('tbody tr td:nth-child(5)').text()
-            //         let listOfStocks = ""
-            //         let prevIndex = 0
-            //         for (let i = 0; i < strOfStocks.length; i++) {
-            //             if (strOfStocks[i] == '.') {
-            //                 listOfStocks += strOfStocks.slice(prevIndex, i + 3) + " "
-            //                 prevIndex = i + 3
-            //             }
-            //         }
-            //         newFetchStockPrices.push({ name: ticker, prices: listOfStocks })
-            //     }
-
-            //     console.log(ticker)
-            // }
-            console.log('finito')
-
-
             return newFetchStockPrices
         }
         // practice: () => ([{ name: "hello", married: true }]),

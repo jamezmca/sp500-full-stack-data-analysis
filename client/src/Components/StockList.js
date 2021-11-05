@@ -4,11 +4,7 @@ import { GET_STOCKS_LIST, GET_LIST_OF_STOCKS, GET_NEW_LIST_OF_STOCK_PRICES } fro
 import { UPDATE_STOCK_PRICES } from '../GraphQL/Mutations'
 import { fetchData } from '../api'
 import Stock from './Stock';
-import hello from './james.json'
 //information will be stock_id | name | lastfetched | 'prices x 14 in CSV format'
-
-
-//i want some logic that fetches data from a react hook depending on when the last entry was from 
 
 
 export default function StockList() {
@@ -25,36 +21,28 @@ export default function StockList() {
   useEffect(() => {
     if (!loading1) {
       const lastFetchedDate = steakPricesOld.getAllStockPrices[0].lastfetched
-      let d = new Date(0)
-      d.setUTCMilliseconds(lastFetchedDate)
-      let dDay = d.getDate()
-      let dMonth = d.getMonth()
-      let dYear = d.getFullYear()
-      let dStr = `${dYear}-${dMonth}-${dDay}`
 
       const today = new Date()
       let todayDay = today.getDate()
       let todayMonth = today.getMonth()
       let todayYear = today.getFullYear()
       let todayStr = `${todayYear}-${todayMonth}-${todayDay}`
-
-      if (!loading2 && dStr !== todayStr && !loading) {
-        console.log('hello')
+      if (!loading2 && lastFetchedDate !== todayStr && !loading) {
         seek({
           variables: {
             lastfetched: todayStr
           }
         })
       } else {
+
         setBombs(steakPricesOld)
         setDataLoading(false)
       }
     }
-  }, [[loading, seek, loading1, loading2, steakPricesOld?.getAllStockPrices, steakList]])
-
+  }, [loading, seek, loading1, loading2, steakPricesOld, steakList])
   useEffect(() => {
     if (data !== [] && !loading) {
-      setBombs(data)
+      setBombs(() => data)
       setDataLoading(false)
     }
   }, [loading, data])
@@ -62,19 +50,22 @@ export default function StockList() {
 
   useEffect(() => {
     function findBombStocks(stocks, weeks) {
+      // console.log('steaks', stocks)
       let arrayOfBombStocks = []
       let interconnectednessCount = 0
-
+      console.log('lleeennnggthh', stocks.length)
       for (let stock of stocks) {
-        let arrayOfPrices = stock.prices.split(' ').map(val => parseFloat(val))
+        let arrayOfPrices = stock.prices.split(' ').filter(val => val !== '').map(val => parseFloat(val.replace(',', '')))
+        // console.log(stock, arrayOfPrices)
         let maxPrice = Math.max(...arrayOfPrices)
         let minPrice = Math.min(...arrayOfPrices)
         let maxIndex = arrayOfPrices.indexOf(maxPrice)
         let minIndex = arrayOfPrices.indexOf(minPrice)
         let delta = maxIndex - minIndex
         let devaluation = maxPrice / minPrice
+        // console.log(stock.name, maxPrice, minPrice, maxIndex, minIndex, delta, devaluation)
+
         if (delta > 0 && devaluation > 1.2) {
-          // console.log(stock.name, maxPrice, minPrice, maxIndex, minIndex, delta, devaluation)
           let temp = {
             name: stock.name.toUpperCase().replace('_', " "),
             decPerc: 100 - (minPrice * 100 / maxPrice),
@@ -82,9 +73,10 @@ export default function StockList() {
             maxIndex,
             minIndex,
             minPrice,
-            daysSinceMin: arrayOfPrices.length - minIndex,
+            daysSinceMin: minIndex,
             gradient: (100 - (minPrice * 100 / maxPrice)) / delta
           }
+          console.log(stock, (arrayOfPrices[0] / minPrice -1)*100, minIndex )
           arrayOfBombStocks.push(temp)
           if (temp.daysSinceMin <= 10) interconnectednessCount++
         }
@@ -99,13 +91,13 @@ export default function StockList() {
       setCalculating(false)
     }
 
-  }, [dataLoading])
+  }, [dataLoading, bombs, setBombs])
 
   return (
     <div className="my-10">
       {!calculating ? (<div>
         <h2 className="text-center uppercase text-2xl sm:text-3xl font-semibold text-indigo-600 mb-2">Bomb Stocks</h2>
-        <p className="text-center">Interconnectedness of events in the last two weeks: {0}</p>
+        <p className="text-center">Interconnectedness of events in the last 100 days: {inter}</p>
         <div className="mt-4">
           <div className="flex mx-2 px-1 bg-indigo-600 text-sm">
             <div className="flex-1">NAME</div>

@@ -11,7 +11,7 @@ export default function Stock(
         maxIndex,
         minIndex } }
 ) {
-    let bgColor = minIndex - maxIndex < 2.6*5 ? 'bg-green-400' : 'bg-white'
+    let bgColor = maxIndex - minIndex < 2.6*5 ? 'bg-green-400' : 'bg-white'
     let style = "p-2 m-2 text-indigo-800 font-semibold text-xs flex justify-between items-center " + bgColor
     return (
         <div className={style}>
