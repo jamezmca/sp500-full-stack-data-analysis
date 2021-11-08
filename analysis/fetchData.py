@@ -29,7 +29,17 @@ df = pd.DataFrame.from_dict(dictionary, orient="index")
 df.to_csv("dictionary.csv")
 
 #DOWNLOAD DATA FROM YFINANCE
-df_sp_values = yf.download(sp_ticker_list, start="2016-01-01")
+df_2021 = yf.download(sp_ticker_list, start="2015-01-01")
+
+#%%
+df_2015 = yf.download(sp_ticker_list, start="2010-01-01", end="2015-01-01")
+
+#%%
+df_2010 = yf.download(sp_ticker_list, start="2005-01-01", end="2010-01-01")
+
+
+#%%
+df_2005 = yf.download(sp_ticker_list, start="2000-01-01", end="2005-01-01")
 
 #TAKE ADJ CLOSE VALUES AND TURN INTO DF
 def checkIfNan(df): 
@@ -39,12 +49,21 @@ def checkIfNan(df):
         return df.iloc[:-1]
     return df
 
-df_sp_prices = checkIfNan(df_sp_values['Adj Close'])
-df_sp_prices.columns = clenseArray(df_sp_prices.columns)
+def saveToCSV(df, name): 
+    df_prices = checkIfNan(df['Adj Close'])
+    df_prices.columns = clenseArray(df_prices.columns)
+    df_prices.to_csv(f'{name}.csv', header=df_prices.columns, index=True , encoding='utf-8')
+    return 
+# df_sp_prices = checkIfNan(df_sp_values['Adj Close'])
+# df_sp_prices.columns = clenseArray(df_sp_prices.columns)
 
-#SAVE TO CSV FILE
-df_sp_prices.to_csv('df_sp_prices.csv', header=df_sp_prices.columns, index=True , encoding='utf-8')
+# #SAVE TO CSV FILE
+# df_sp_prices.to_csv('df_sp_prices.csv', header=df_sp_prices.columns, index=True , encoding='utf-8')
 
+saveToCSV(df_2021, "df_2021")
+saveToCSV(df_2015, "df_2015")
+saveToCSV(df_2010, "df_2010")
+saveToCSV(df_2005, "df_2005")
 print('Fetch Data Complete')
 
 
