@@ -1,6 +1,5 @@
 #%% INITIALIZE
 import os
-from re import M
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -12,13 +11,14 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import base64
 
-#Import from functions.py
+#%% Import from functions.py
 
 #INITIALIZE DATAFRAMES FROM CSV FILES
 df_2005 = pd.read_csv('df_2005.csv')
 df_2010 = pd.read_csv('df_2010.csv')
 df_2015 = pd.read_csv('df_2015.csv')
 df_2021 = pd.read_csv('df_2021.csv')
+print(df_2005)
 dictionary = pd.read_csv('dictionary.csv')
 newDict = {}
 for row in dictionary.values:
